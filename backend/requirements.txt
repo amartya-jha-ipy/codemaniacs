@@ -1,0 +1,10 @@
+# SENTINEL-CRS backend dependencies
+fastapi>=0.110
+uvicorn>=0.27
+python-multipart>=0.0.9
+reportlab>=4.0
+scikit-learn>=1.3
+numpy>=1.24
+# Testing
+pytest>=7.4
+httpx>=0.27
