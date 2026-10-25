@@ -1,25 +1,32 @@
 """
 Tamper-evident audit log for the APK analysis pipeline.
 
-Every pipeline stage appends one entry. Each entry stores the SHA-256 hash of
-the previous entry, so changing or removing any past entry breaks the chain
-and verify_chain() reports where.
+Every pipeline stage appends one entry. Each entry stores an HMAC-SHA256 of its
+content plus the previous entry's HMAC, so changing or removing any past entry
+breaks the chain and verify_chain() reports where.
 
 Protections:
   1. Triggers block UPDATE and DELETE on the log table.
-  2. Each entry's hash covers its content AND the previous entry's hash.
-  3. verify_chain() recomputes every hash and checks every link.
+  2. Each hash is an HMAC keyed with a secret held OUTSIDE the database
+     (environment variable AUDIT_LOG_KEY). Someone with only the .sqlite file
+     cannot recompute a valid chain, even after dropping the triggers.
+  3. Each entry covers the previous entry's hash, so deletion or reordering
+     is detected.
+  4. verify_chain() recomputes every HMAC and checks every link.
 
-Limit: anyone with write access to the .sqlite file can drop the triggers and
-rewrite the chain. For stronger evidence, periodically record the latest
-entry_hash somewhere outside this file (e.g. in the evidence bundle PDF or an
-external log) and compare it later.
+Still record latest_hash() outside the database (e.g. in the evidence PDF)
+so that a whole-chain rewrite made with the key is also detectable.
+
+Losing AUDIT_LOG_KEY means the chain can no longer be verified. Keep a copy
+in a secure store, and never commit it to git.
 """
 
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
+import os
 import sqlite3
 from dataclasses import dataclass
 from datetime import datetime, timezone
@@ -33,6 +40,9 @@ STAGES = (
     "RISK_GRADING",
     "EVIDENCE_EXPORT",
 )
+
+KEY_ENV_VAR = "AUDIT_LOG_KEY"
+MIN_KEY_LENGTH = 32
 
 GENESIS_HASH = "0" * 64
 
@@ -74,9 +84,24 @@ class AuditEntry:
     entry_hash: str
 
 
-def _compute_hash(prev_hash: str, ts: str, case_id: str, stage: str, payload_json: str) -> str:
-    material = "|".join([prev_hash, ts, case_id, stage, payload_json])
-    return hashlib.sha256(material.encode("utf-8")).hexdigest()
+def load_key(key: Optional[str | bytes] = None) -> bytes:
+    """
+    Return the HMAC key. If not passed in, read it from AUDIT_LOG_KEY.
+    Raises ValueError if the key is missing or too short.
+    """
+    if key is None:
+        key = os.environ.get(KEY_ENV_VAR)
+    if key is None:
+        raise ValueError(f"No audit key: set the {KEY_ENV_VAR} environment variable")
+    raw = key.encode("utf-8") if isinstance(key, str) else bytes(key)
+    if len(raw) < MIN_KEY_LENGTH:
+        raise ValueError(f"Audit key must be at least {MIN_KEY_LENGTH} bytes")
+    return raw
+
+
+def _compute_hash(key: bytes, prev_hash: str, ts: str, case_id: str, stage: str, payload_json: str) -> str:
+    material = "|".join([prev_hash, ts, case_id, stage, payload_json]).encode("utf-8")
+    return hmac.new(key, material, hashlib.sha256).hexdigest()
 
 
 def init_audit_log(conn: sqlite3.Connection) -> None:
@@ -91,12 +116,14 @@ def _last_hash(conn: sqlite3.Connection) -> str:
 
 def append_entry(
     conn: sqlite3.Connection,
+    key: Optional[str | bytes],
     case_id: str,
     stage: str,
     payload: dict[str, Any],
     ts: Optional[str] = None,
 ) -> AuditEntry:
     """Append one entry to the chain. Raises ValueError for bad input."""
+    hmac_key = load_key(key)
     if not case_id.strip():
         raise ValueError("case_id is required")
     if stage not in STAGES:
@@ -113,7 +140,7 @@ def append_entry(
     conn.execute("BEGIN IMMEDIATE")
     try:
         prev = _last_hash(conn)
-        entry_hash = _compute_hash(prev, stamp, case_id, stage, payload_json)
+        entry_hash = _compute_hash(hmac_key, prev, stamp, case_id, stage, payload_json)
         cur = conn.execute(
             "INSERT INTO audit_log (ts, case_id, stage, payload_json, prev_hash, entry_hash) "
             "VALUES (?, ?, ?, ?, ?, ?)",
@@ -138,24 +165,27 @@ def get_entries(conn: sqlite3.Connection, case_id: Optional[str] = None) -> list
                        r["payload_json"], r["prev_hash"], r["entry_hash"]) for r in rows]
 
 
-def verify_chain(conn: sqlite3.Connection) -> tuple[bool, Optional[int]]:
+def verify_chain(conn: sqlite3.Connection, key: Optional[str | bytes] = None) -> tuple[bool, Optional[int]]:
     """
-    Recheck the whole log. Returns (True, None) if intact, or (False, id)
-    with the id of the first entry that fails (bad hash or broken link).
-    Entries that were deleted, or whose triggers were dropped and rewritten,
-    are caught by the link check.
+    Recheck the whole log with the key. Returns (True, None) if intact, or
+    (False, id) with the first entry that fails (bad HMAC or broken link).
+    A chain rebuilt with a different key fails on the first entry.
     """
+    hmac_key = load_key(key)
     expected_prev = GENESIS_HASH
     for e in get_entries(conn):
         if e.prev_hash != expected_prev:
             return False, e.id
-        recomputed = _compute_hash(e.prev_hash, e.ts, e.case_id, e.stage, e.payload_json)
-        if recomputed != e.entry_hash:
+        recomputed = _compute_hash(hmac_key, e.prev_hash, e.ts, e.case_id, e.stage, e.payload_json)
+        if not hmac.compare_digest(recomputed, e.entry_hash):
             return False, e.id
         expected_prev = e.entry_hash
     return True, None
 
 
 def latest_hash(conn: sqlite3.Connection) -> str:
-    """The current chain head. Record this outside the database for stronger evidence."""
+    """
+    The current chain head. Record this outside the database (evidence PDF,
+    external log). It does not need the key to read.
+    """
     return _last_hash(conn)
