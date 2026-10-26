@@ -1,5 +1,5 @@
 """
-ANVESH v2.0 - AI Executive Briefing Module
+ANVESH - AI Executive Briefing Module
 =================================================
 Module: backend/ai.py
 Lead: Developer 3 — AI/ML & Static Parsing Lead

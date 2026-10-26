@@ -188,7 +188,7 @@ export default function SentinelConsole() {
       <div className="sentinel-dash"><div className="login-wrap">
         <form className="login-card" onSubmit={handleLogin}>
           <div className="login-emblem">A</div>
-          <h1>ANVESH v2.0</h1>
+          <h1>ANVESH</h1>
           <p className="sub">Secure Officer Authentication · EOU, Bihar Police</p>
           <div className="login-field"><label>Username</label><input value={username} required autoComplete="username" onChange={(e) => setUsername(e.target.value)} placeholder="e.g. analyst" /></div>
           <div className="login-field"><label>Password</label><input type="password" value={password} required autoComplete="current-password" onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" /></div>
@@ -226,7 +226,7 @@ export default function SentinelConsole() {
       <header className="site-header">
         <Link className="brand" href="/" aria-label="ANVESH home">
           <span className="brand-mark" aria-hidden="true">A</span>
-          <span><strong>ANVESH <small>v2.0</small></strong><small className="brand-sub">Android Network &amp; Visual Evidence Security Hub</small></span>
+          <span><strong>ANVESH</strong><small className="brand-sub">Android Network &amp; Visual Evidence Security Hub</small></span>
         </Link>
         <nav className="main-nav" aria-label="Main navigation">
           <Link className="nav-link" href="/">Portal Home</Link>
@@ -432,7 +432,7 @@ export default function SentinelConsole() {
         </div>
       </div>
 
-      <footer className="site-footer"><span><strong>ANVESH v2.0</strong> · Bihar Police Cyber Cell</span><span>Accessibility · Help · Privacy notice</span></footer>
+      <footer className="site-footer"><span><strong>ANVESH</strong> · Bihar Police Cyber Cell</span><span>Accessibility · Help · Privacy notice</span></footer>
       {toast && <div className="toast show" role="status">{toast}</div>}
     </div>
   )

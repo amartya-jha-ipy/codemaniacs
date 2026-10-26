@@ -58,7 +58,7 @@ except Exception as _scoring_exc:  # pragma: no cover - import guard
 logger = logging.getLogger("sentinel.main")
 
 app = FastAPI(
-    title="ANVESH v2.0 API",
+    title="ANVESH API",
     description="Bihar Police Cyber Cell Malware Analysis & Digital Forensics Engine",
     version="2.0.0"
 )
@@ -102,7 +102,7 @@ _SEVERITY_LABEL = {
 def read_root():
     return {
         "status": "online",
-        "system": "ANVESH v2.0 Backend",
+        "system": "ANVESH Backend",
         "agency": "Bihar Police Cyber Cell",
         "jurisdiction": "Digital Forensics & Malware Analysis"
     }

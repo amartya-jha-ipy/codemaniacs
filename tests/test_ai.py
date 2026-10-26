@@ -1,5 +1,5 @@
 """
-ANVESH v2.0 - Unit Tests for AI Executive Briefing Module
+ANVESH - Unit Tests for AI Executive Briefing Module
 ==============================================================
 Module: tests/test_ai.py
 Author: Developer 3 — AI/ML & Static Parsing Lead
