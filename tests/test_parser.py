@@ -1,5 +1,5 @@
 """
-SENTINEL-CRS v2.0 - Unit Tests for Static APK Parser
+ANVESH v2.0 - Unit Tests for Static APK Parser
 ===================================================
 Module: tests/test_parser.py
 Author: Developer 3 — AI/ML & Static Parsing Lead

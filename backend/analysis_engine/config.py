@@ -1,4 +1,4 @@
-"""Central configuration for the SENTINEL-CRS analysis engine (AI/ML Engineer 2 modules).
+"""Central configuration for the ANVESH analysis engine (AI/ML Engineer 2 modules).
 
 Everything here is overridable via environment variables so tests and deployments
 can redirect storage without touching code. Paths default to the same relative
@@ -23,9 +23,9 @@ SIMILARITY_THRESHOLD = float(os.environ.get("SENTINEL_SIMILARITY_THRESHOLD", "0.
 MIN_VECTORS_FOR_CLUSTERING = int(os.environ.get("SENTINEL_MIN_CLUSTER_VECTORS", "4"))
 
 # --- Tooling / provenance ----------------------------------------------------
-TOOL_NAME = "SENTINEL-CRS-analysis-engine"
+TOOL_NAME = "ANVESH-analysis-engine"
 TOOL_VERSION = "2.0.0"
 
 # Neutral product branding for generated reports. Do NOT substitute official
 # government/police emblems or endorsement text unless explicitly authorized.
-REPORT_BRAND = os.environ.get("SENTINEL_REPORT_BRAND", "SENTINEL-CRS")
+REPORT_BRAND = os.environ.get("SENTINEL_REPORT_BRAND", "ANVESH")

@@ -1,4 +1,4 @@
-"""SENTINEL-CRS analysis engine (AI/ML Engineer 2).
+"""ANVESH analysis engine (AI/ML Engineer 2).
 
 Isolated, reusable modules for static feature similarity, IOC matching, and the
 evidence report pipeline. Importable as ``analysis_engine`` when the backend is run
