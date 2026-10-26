@@ -291,7 +291,7 @@ export default function DigitalPoliceLanding() {
         </div>
         <div className="border-t border-white/10 text-[11px] text-slate-400 px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-2 max-w-7xl mx-auto">
           <span><strong className="text-amber-300">Demonstration project.</strong> Not an official Government of Bihar website.</span>
-          <span>Content owned by Economic Offences Unit (EOU), Bihar Police · Developed by Team CodeManiacs · Last updated 26 Oct 2026</span>
+          <span>Content owned by Economic Offences Unit (EOU), Bihar Police · Developed by Team codemaniacs · Last updated 26 Oct 2026</span>
         </div>
       </footer>
     </div>
