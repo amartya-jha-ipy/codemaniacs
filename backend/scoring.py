@@ -1,5 +1,5 @@
 """
-SENTINEL-CRS v2.0 - Dynamic Risk Scoring Module
+ANVESH v2.0 - Dynamic Risk Scoring Module
 ================================================
 Module: backend/scoring.py
 Lead: Developer 3 — AI/ML & Static Parsing Lead

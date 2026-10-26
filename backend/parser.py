@@ -1,5 +1,5 @@
 """
-SENTINEL-CRS v2.0 - Static Android APK Parser
+ANVESH v2.0 - Static Android APK Parser
 =============================================
 Module: backend/parser.py
 Lead: Developer 3 — AI/ML & Static Parsing Lead

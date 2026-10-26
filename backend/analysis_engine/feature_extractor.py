@@ -95,6 +95,12 @@ def _classify_permission(short_name):
     return "Info"
 
 
+def classify_permission(name):
+    """Public helper: severity level for a full permission name (e.g.
+    ``android.permission.READ_SMS`` -> ``Critical``)."""
+    return _classify_permission(str(name).rsplit(".", 1)[-1])
+
+
 def extract_static_features(contents, filename="specimen.apk"):
     """Extract verifiable static features from raw APK bytes.
 

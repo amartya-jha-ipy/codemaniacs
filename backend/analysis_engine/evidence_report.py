@@ -156,7 +156,7 @@ def generate_pdf_report(report, output_dir=None):
         return t
 
     # Cover
-    story.append(Paragraph(f"{report.get('report_brand', 'SENTINEL-CRS')} — Static Analysis Evidence Report", title_style))
+    story.append(Paragraph(f"{report.get('report_brand', 'ANVESH')} — Static Analysis Evidence Report", title_style))
     story.append(Paragraph(
         f"Analysis ID: {report.get('analysis_id')} &nbsp;|&nbsp; Generated: {report.get('generated_at')} "
         f"&nbsp;|&nbsp; Schema: {report.get('report_schema_version')}", sub_style))

@@ -1,5 +1,5 @@
 """
-SENTINEL-CRS v2.0 - Unit Tests for Dynamic Risk Scoring Module
+ANVESH v2.0 - Unit Tests for Dynamic Risk Scoring Module
 ==============================================================
 Module: tests/test_scoring.py
 Author: Developer 3 — AI/ML & Static Parsing Lead

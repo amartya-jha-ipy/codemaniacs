@@ -1,3 +1,3 @@
 """
-SENTINEL-CRS v2.0 - Backend Package
+ANVESH v2.0 - Backend Package
 """
