@@ -10,9 +10,6 @@ const _jetbrainsMono = JetBrains_Mono({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: 'ANVESH — Android Network & Visual Evidence Security Hub',
   description: 'Cyber Crime & Digital Forensics portal for seized Android APK analysis — Economic Offences Unit, Bihar Police.',
-  icons: {
-    icon: '/emblem.svg',
-  },
 }
 
 export default function RootLayout({
